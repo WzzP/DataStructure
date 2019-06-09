@@ -29,7 +29,7 @@ class LList(object):
 
     def append(self, elem):
         """插入到最后"""
-        if self.is_empty():
+        if self.is_empty():  
             self._head = Node(elem)
         else:
             p = self._head
@@ -57,6 +57,35 @@ class LList(object):
             proc(p.elem)
             p = p.next
 
+    def reverse(self):
+        """反转链表
+        思路： 新建一个链表， 然后循环插入
+        """
+        p = None
+        while self._head is not None:
+            q = self._head # 从开头弹出
+            self._head = self._head.next  # 并将next 赋值给 head
+            q.next = p
+            p = q
+        self._head = p
+
+    def sort(self):
+        """排序""" 
+        if self._head is None:
+            return
+        crt = self._head.next
+        while crt is not None:
+            x = crt.elem
+            p = self._head
+            while p is not crt and p.elem <= x:
+                p = p.next
+            while p is not crt:
+                y = p.elem
+                p.elem = x
+                x = y
+                p = p.next
+            crt.elem = x
+            crt = crt.next
 
 class LCList(object):
     """循环单链表"""
@@ -104,14 +133,75 @@ class LCList(object):
                 break
             p = p.next
 
+
+class DLNode(Node):
+    """双链表结点"""
+    def __init__(self, elem, prev=None, next=None):
+        super(DLNode, self).__init__(elem, next=next)
+        self.prev = prev
+
+class DLList(LList):
+    """双链表"""
+    def __init__(self):
+        super(DLList, self).__init__()
+        self._rear = None
+
+    def prepend(self, elem):
+        """前端插入"""
+        p = DLNode(elem, next=self._head)
+        if self.is_empty(): # 空表
+            self._rear = p
+        else:
+            p.next.prev = p
+        self._head = p
+
+    def append(self, elem):
+        """后端插入"""
+        p = DLNode(elem, self._rear)
+        if self.is_empty(): # 空表
+            self._head = p
+        else:
+            p.prev.next = p
+        self._rear = p
+
+    def pop(self):
+        """前端弹出"""
+        if self.is_empty():
+            raise IndexError('pop from empty Dllist')
+        p = self._head
+        self._head = self._head.next
+        if self._head is not None:
+            self._rear.prev = None
+        return  p.elem
+
+    def pop_last(self):
+        """后端弹出"""
+        if self.is_empty():
+            raise IndexError('pop from empty Dllist')
+        p = self._rear
+        self._rear = self._rear.prev
+        if self._rear is None:
+            self._head = None
+        else:
+            self._rear.next = None
+        return  p.elem
+
+
+
+
+
 if __name__ == '__main__':
-    ll = LList()
-    ll.append(1)
-    ll.append(2)
-    ll.append(3)
-    ll.for_each(print)
-    ll.pop()
-    ll.pop()
-    ll.pop()
-    ll.pop()
-    ll.for_each(print)
+    dl = DLList()
+    dl.append(1)
+    dl.append(2)
+    dl.append(3)
+    dl.for_each(print)
+    print(dl.pop())
+    print(dl.pop())
+    print(dl.pop())
+    dl.prepend(1)
+    dl.prepend(2)
+    dl.prepend(3)
+    print(dl.pop_last())
+    print(dl.pop_last())
+    print(dl.pop_last())
