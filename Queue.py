@@ -24,7 +24,7 @@ class LQueue(object):
             self.head.next = self.rear
         else:
             self.rear.next = p
-            self.rear = p
+            self.rear = p 
 
     def dequeue(self):
         """出队"""
